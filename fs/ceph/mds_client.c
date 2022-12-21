@@ -5064,6 +5064,9 @@ static void handle_lease(struct ceph_mds_client *mdsc,
 	if (!ceph_inc_mds_stopping_blocker(mdsc, session))
 		return;
 
+	if (!ceph_inc_mds_stopping_blocker(mdsc, session))
+		return;
+
 	/* decode */
 	if (msg->front.iov_len < sizeof(*h) + sizeof(u32))
 		goto bad;

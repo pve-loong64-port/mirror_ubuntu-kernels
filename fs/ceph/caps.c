@@ -4356,6 +4356,9 @@ void ceph_handle_caps(struct ceph_mds_session *session,
 	if (!ceph_inc_mds_stopping_blocker(mdsc, session))
 		return;
 
+	if (!ceph_inc_mds_stopping_blocker(mdsc, session))
+		return;
+
 	/* decode */
 	end = msg->front.iov_base + msg->front.iov_len;
 	if (msg->front.iov_len < sizeof(*h))
