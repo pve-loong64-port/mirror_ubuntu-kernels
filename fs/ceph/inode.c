@@ -784,23 +784,8 @@ int ceph_fill_file_size(struct inode *inode, int issued,
 			ci->i_truncate_seq = truncate_seq;
 
 			/* the MDS should have revoked these caps */
-			if (issued & (CEPH_CAP_FILE_EXCL |
-				      CEPH_CAP_FILE_RD |
-				      CEPH_CAP_FILE_WR |
-				      CEPH_CAP_FILE_LAZYIO)) {
-				pr_err_client(cl,
-					"%p ino %llx.%llx already issued %s, newcaps %s\n",
-					inode, ceph_vinop(inode),
-					ceph_cap_string(issued),
-					ceph_cap_string(newcaps));
-				pr_err_client(cl, " truncate_seq %u -> %u\n",
-					      ci->i_truncate_seq,
-					      truncate_seq);
-				pr_err_client(cl, "  size %lld -> %llu\n",
-					      isize, size);
-				msleep(1000);
-				BUG();
-			}
+			WARN_ON_ONCE(issued & (CEPH_CAP_FILE_RD |
+					       CEPH_CAP_FILE_LAZYIO));
 			/*
 			 * If we hold relevant caps, or in the case where we're
 			 * not the only client referencing this file and we
