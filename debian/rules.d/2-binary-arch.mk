@@ -274,6 +274,14 @@ endif
 	# Copy over the compilation version.
 	cp "$(build_dir)/include/generated/compile.h" \
 		"$(hdrdir)/include/generated/compile.h"
+	# Generate a stripped-down vmlinux with only BTF sections to enable BTF
+	# generation on out-of-tree module builds. Skip this on arches with
+	# do_tools_bpftool_stub=true, which declares the kernel is built with
+	# CONFIG_DEBUG_INFO_BTF disabled, and thus vmlinux lacks BTF info.
+ifneq ($(do_tools_bpftool_stub),true)
+	$(CROSS_COMPILE)objcopy --only-section .BTF --only-section .BTF_ids $(build_dir)/vmlinux $(hdrdir)/vmlinux
+	chmod 644 $(hdrdir)/vmlinux
+endif
 	# Add UTS_UBUNTU_RELEASE_ABI since UTS_RELEASE is difficult to parse.
 	echo "#define UTS_UBUNTU_RELEASE_ABI $(abinum)" >> $(hdrdir)/include/generated/utsrelease.h
 	# powerpc kernel arch seems to need some .o files for external module linking. Add them in.
