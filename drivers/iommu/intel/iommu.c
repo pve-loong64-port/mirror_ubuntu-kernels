@@ -3949,6 +3949,7 @@ static void quirk_iommu_igfx(struct pci_dev *dev)
 	disable_igfx_iommu = 1;
 }
 
+
 static void quirk_iommu_ipu(struct pci_dev *dev)
 {
 	if (!IS_INTEL_IPU(dev))
@@ -3960,6 +3961,9 @@ static void quirk_iommu_ipu(struct pci_dev *dev)
 	pci_info(dev, "Passthrough IOMMU for integrated Intel IPU\n");
 	dmar_map_ipu = 0;
 }
+
+/* Q35 integrated gfx dmar support is totally busted. */
+DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x29b2, quirk_iommu_igfx);
 
 /* G4x/GM45 integrated gfx dmar support is totally busted. */
 DECLARE_PCI_FIXUP_HEADER(PCI_VENDOR_ID_INTEL, 0x2a40, quirk_iommu_igfx);
