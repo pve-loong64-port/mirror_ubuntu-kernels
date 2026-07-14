@@ -1566,7 +1566,7 @@ static void invoke_bpf_mod_ret(struct jit_ctx *ctx, struct bpf_tramp_links *tl,
 
 void *arch_alloc_bpf_trampoline(unsigned int size)
 {
-	return bpf_prog_pack_alloc(size, jit_fill_hole);
+	return bpf_prog_pack_alloc(size, jit_fill_hole, false);
 }
 
 void arch_free_bpf_trampoline(void *image, unsigned int size)
@@ -2003,7 +2003,8 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_prog *prog)
 	image_size = prog_size + extable_size;
 	/* Now we know the size of the structure to make */
 	ro_header = bpf_jit_binary_pack_alloc(image_size, &ro_image_ptr, sizeof(u32),
-					      &header, &image_ptr, jit_fill_hole);
+					      &header, &image_ptr, jit_fill_hole,
+					      bpf_prog_was_classic(prog));
 	if (!ro_header) {
 		prog = orig_prog;
 		goto out_offset;
